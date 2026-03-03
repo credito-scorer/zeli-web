@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zeli — Tu asistente comercial en WhatsApp</title>
+<meta name="description" content="Zeli automatiza las operaciones de tu negocio a través de WhatsApp. Tecnología para pequeñas y medianas empresas en Panamá.">
+<meta property="og:title" content="Zeli Technologies">
+<meta property="og:description" content="Pregúntale a Zeli. Tu asistente comercial en WhatsApp.">
+<meta property="og:image" content="https://zeli.lat/og.png">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap');
+
+  :root {
+    --blue: #00C2FF;
+    --blue-dark: #0066FF;
+    --bg: #03060f;
+    --surface: #080d1a;
+    --border: #0d1829;
+    --text: #e8f0ff;
+    --muted: rgba(255,255,255,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 48px;
+    background: rgba(3,6,15,0.8);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0,194,255,0.08);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .nav-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-icon svg { width: 22px; height: 22px; }
+
+  .nav-name {
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    color: #fff;
+  }
+
+  .nav-name span { color: var(--blue); }
+
+  .nav-cta {
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 24px;
+    border-radius: 100px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: opacity 0.2s;
+  }
+
+  .nav-cta:hover { opacity: 0.85; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px 80px;
+    position: relative;
+  }
+
+  .hero-glow {
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,194,255,0.08) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,194,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,194,255,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,194,255,0.08);
+    border: 1px solid rgba(0,194,255,0.2);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--blue);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .hero h1 {
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900;
+    letter-spacing: -4px;
+    line-height: 0.95;
+    margin-bottom: 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: clamp(16px, 2.5vw, 20px);
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 520px;
+    line-height: 1.6;
+    margin-bottom: 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero p strong {
+    color: rgba(255,255,255,0.8);
+    font-weight: 600;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    color: #fff;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 16px 32px;
+    border-radius: 100px;
+    text-decoration: none;
+    box-shadow: 0 8px 32px rgba(0,102,255,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,102,255,0.45);
+  }
+
+  .btn-secondary {
+    color: var(--muted);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    letter-spacing: 0.3px;
+    transition: color 0.2s;
+  }
+
+  .btn-secondary:hover { color: #fff; }
+
+  /* WhatsApp icon */
+  .wa-icon {
+    width: 22px; height: 22px;
+    flex-shrink: 0;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .section {
+    padding: 100px 24px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+    text-align: center;
+    margin-bottom: 64px;
+    line-height: 1.1;
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px 32px;
+    position: relative;
+  }
+
+  .step:first-child { border-radius: 16px 0 0 16px; }
+  .step:last-child { border-radius: 0 16px 16px 0; }
+
+  .step-num {
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--blue);
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+
+  .step-icon {
+    font-size: 36px;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .step h3 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+  }
+
+  .step p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* ── VERTICALS ── */
+  .verticals {
+    padding: 0 24px 100px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .tag {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .tag:hover {
+    border-color: rgba(0,194,255,0.3);
+    color: var(--blue);
+  }
+
+  .tag.active {
+    background: rgba(0,194,255,0.08);
+    border-color: rgba(0,194,255,0.3);
+    color: var(--blue);
+  }
+
+  /* ── CTA SECTION ── */
+  .cta-section {
+    padding: 0 24px 120px;
+  }
+
+  .cta-box {
+    max-width: 700px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, rgba(0,194,255,0.06), rgba(0,102,255,0.06));
+    border: 1px solid rgba(0,194,255,0.15);
+    border-radius: 24px;
+    padding: 64px 48px;
+    text-align: center;
+  }
+
+  .cta-box h2 {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 900;
+    letter-spacing: -1.5px;
+    margin-bottom: 16px;
+    line-height: 1.1;
+  }
+
+  .cta-box p {
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-logo {
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.5px;
+    color: rgba(255,255,255,0.3);
+  }
+
+  .footer-logo span { color: rgba(0,194,255,0.5); }
+
+  .footer-links {
+    display: flex;
+    gap: 28px;
+  }
+
+  .footer-links a {
+    font-size: 13px;
+    color: rgba(255,255,255,0.25);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: rgba(255,255,255,0.6); }
+
+  .footer-copy {
+    font-size: 12px;
+    color: rgba(255,255,255,0.15);
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .steps { grid-template-columns: 1fr; gap: 2px; }
+    .step:first-child { border-radius: 16px 16px 0 0; }
+    .step:last-child { border-radius: 0 0 16px 16px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .cta-box { padding: 40px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-icon">
+      <svg viewBox="0 0 28 28" fill="none">
+        <path d="M6 6h16l-12 8h12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 14l-4 8h16" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="nav-name">Zel<span>i</span></span>
+  </a>
+  <a href="https://wa.me/50764221918" class="nav-cta" target="_blank">Hablar con Zeli →</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-badge">
+    <div class="badge-dot"></div>
+    Disponible en WhatsApp · Panamá
+  </div>
+
+  <h1>
+    Pregúntale<br>
+    a <span class="highlight">Zeli.</span>
+  </h1>
+
+  <p>
+    Tu asistente comercial en WhatsApp. <strong>Automatizamos las operaciones de tu negocio</strong> para que pases menos tiempo en el teléfono y más tiempo vendiendo.
+  </p>
+
+  <div class="hero-actions">
+    <a href="https://wa.me/50764221918" class="btn-primary" target="_blank">
+      <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.555 4.122 1.528 5.855L.057 23.882l6.164-1.616A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.497-5.193-1.367l-.371-.22-3.862 1.013 1.031-3.771-.242-.389A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+      </svg>
+      Hablar con Zeli
+    </a>
+    <a href="#como-funciona" class="btn-secondary">¿Cómo funciona? ↓</a>
+  </div>
+</section>
+
+<!-- How it works -->
+<div id="como-funciona" class="section">
+  <div class="section-label">Así de simple</div>
+  <h2 class="section-title">Tres pasos.<br>Sin apps. Sin registro.</h2>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <span class="step-icon">💬</span>
+      <h3>Escríbenos</h3>
+      <p>Manda un mensaje por WhatsApp con lo que necesitas. Así como le escribes a un amigo.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <span class="step-icon">⚡</span>
+      <h3>Zeli trabaja</h3>
+      <p>Buscamos, cotizamos y coordinamos todo por ti. Sin filas. Sin llamadas. Sin esperas largas.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <span class="step-icon">✅</span>
+      <h3>Listo</h3>
+      <p>Recibes confirmación, precio y tiempo de entrega. Tú decides. Nosotros ejecutamos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Verticals -->
+<div class="verticals">
+  <div class="section-label">Donde operamos</div>
+  <h2 class="section-title">Un asistente para<br>cada tipo de negocio.</h2>
+
+  <div class="tags">
+    <span class="tag active">🔧 Repuestos y autopartes</span>
+    <span class="tag">👕 Ropa y calzado</span>
+    <span class="tag">🍽️ Restaurantes</span>
+    <span class="tag">💊 Farmacias</span>
+    <span class="tag">🏗️ Materiales de construcción</span>
+    <span class="tag">🛒 Distribuidoras</span>
+    <span class="tag">📦 Logística</span>
+    <span class="tag">+ más</span>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-box">
+    <h2>¿Listo para automatizar<br>tu negocio?</h2>
+    <p>Escríbenos ahora. El primer mes es gratis.<br>Sin contratos. Sin complicaciones.</p>
+    <a href="https://wa.me/50764221918" class="btn-primary" target="_blank" style="display:inline-flex;">
+      <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.555 4.122 1.528 5.855L.057 23.882l6.164-1.616A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.497-5.193-1.367l-.371-.22-3.862 1.013 1.031-3.771-.242-.389A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+      </svg>
+      Hablar con Zeli ahora
+    </a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-logo">Zel<span>i</span></div>
+  <div class="footer-links">
+    <a href="/privacy.html">Privacidad</a>
+    <a href="/terms.html">Términos</a>
+    <a href="/deletion.html">Eliminar datos</a>
+    <a href="mailto:hola@zeli.lat">Contacto</a>
+  </div>
+  <div class="footer-copy">© 2026 Zeli Technologies · Panamá</div>
+</footer>
+
+</body>
+</html>
