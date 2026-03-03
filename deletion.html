@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eliminar mis datos — Zeli Technologies</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap');
+  :root {
+    --blue: #00C2FF;
+    --bg: #03060f;
+    --border: #0d1829;
+    --text: #e8f0ff;
+    --muted: rgba(255,255,255,0.45);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; }
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px; border-bottom: 1px solid var(--border);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+  .nav-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #00C2FF, #0066FF); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
+  .nav-icon svg { width: 22px; height: 22px; }
+  .nav-name { font-weight: 800; font-size: 22px; letter-spacing: -0.5px; color: #fff; }
+  .nav-name span { color: var(--blue); }
+  .back { font-size: 14px; color: var(--muted); text-decoration: none; }
+  .back:hover { color: #fff; }
+  .container { max-width: 640px; margin: 0 auto; padding: 80px 24px 120px; text-align: center; }
+  .icon { font-size: 56px; margin-bottom: 28px; }
+  .page-label { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--blue); margin-bottom: 16px; }
+  h1 { font-size: 42px; font-weight: 900; letter-spacing: -2px; margin-bottom: 20px; }
+  .intro { font-size: 17px; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 56px; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .steps-box {
+    background: #080d1a;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    text-align: left;
+    margin-bottom: 40px;
+  }
+  .steps-box h2 { font-size: 16px; font-weight: 700; margin-bottom: 28px; color: #fff; }
+  .step-row { display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start; }
+  .step-row:last-child { margin-bottom: 0; }
+  .step-num {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: rgba(0,194,255,0.1);
+    border: 1px solid rgba(0,194,255,0.2);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .step-content p { font-size: 14px; color: var(--muted); line-height: 1.6; font-weight: 300; }
+  .step-content a { color: var(--blue); }
+  .note {
+    background: rgba(0,194,255,0.05);
+    border: 1px solid rgba(0,194,255,0.15);
+    border-radius: 12px;
+    padding: 20px 24px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    text-align: left;
+  }
+  .note strong { color: rgba(255,255,255,0.8); }
+  a { color: var(--blue); }
+  footer { border-top: 1px solid var(--border); padding: 28px 48px; text-align: center; font-size: 12px; color: rgba(255,255,255,0.15); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">
+    <div class="nav-icon">
+      <svg viewBox="0 0 28 28" fill="none">
+        <path d="M6 6h16l-12 8h12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M10 14l-4 8h16" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="nav-name">Zel<span>i</span></span>
+  </a>
+  <a href="/" class="back">← Volver</a>
+</nav>
+
+<div class="container">
+  <div class="icon">🗑️</div>
+  <div class="page-label">Privacidad</div>
+  <h1>Eliminar mis datos</h1>
+  <p class="intro">Tienes derecho a solicitar la eliminación de toda la información que Zeli Technologies tiene sobre ti. El proceso es simple y gratuito.</p>
+
+  <div class="steps-box">
+    <h2>Cómo solicitar la eliminación</h2>
+
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h3>Envía un correo</h3>
+        <p>Escríbenos a <a href="mailto:info@zeli.lat">info@zeli.lat</a> con el asunto <strong>"Eliminar mis datos"</strong>.</p>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h3>Incluye tu número de WhatsApp</h3>
+        <p>Indícanos el número de teléfono con el que interactuaste con Zeli para que podamos identificar tu información.</p>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h3>Confirmación en 30 días</h3>
+        <p>Procesamos todas las solicitudes dentro de los 30 días hábiles siguientes. Te enviaremos una confirmación cuando tus datos hayan sido eliminados.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>¿Qué se elimina?</strong> Eliminamos tu número de teléfono, historial de mensajes, historial de pedidos y cualquier otro dato personal asociado a tu cuenta. Una vez eliminados, estos datos no pueden recuperarse.
+  </div>
+</div>
+
+<footer>© 2026 Zeli Technologies · Santiago, Veraguas, Panamá · <a href="mailto:info@zeli.lat" style="color:inherit;">info@zeli.lat</a></footer>
+</body>
+</html>
