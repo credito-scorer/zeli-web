@@ -59,6 +59,9 @@
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    overflow-x: clip;
+    width: 100%;
+    overscroll-behavior-x: none;
   }
 
   body {
@@ -67,13 +70,18 @@
     font-family: 'Outfit', sans-serif;
     min-height: 100vh;
     min-height: 100dvh;
-    overflow-x: hidden;
+    overflow-x: clip;
+    width: 100%;
+    max-width: 100%;
+    overscroll-behavior-x: none;
   }
 
   /* ── NAV ── */
   nav {
     position: fixed;
     top: 0; left: 0; right: 0;
+    width: 100%;
+    max-width: 100%;
     z-index: 100;
     display: flex;
     align-items: center;
@@ -137,11 +145,15 @@
     text-align: center;
     padding: 120px 24px 80px;
     position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
   }
 
   .hero-glow {
     position: absolute;
-    width: 600px; height: 600px;
+    width: min(600px, 100vmax);
+    height: min(600px, 100vmax);
     border-radius: 50%;
     background: radial-gradient(circle, rgba(0,194,255,0.08) 0%, transparent 70%);
     top: 50%; left: 50%;
@@ -272,6 +284,7 @@
     padding: 100px 24px;
     max-width: 1080px;
     margin: 0 auto;
+    width: 100%;
   }
 
   .section-label {
@@ -342,6 +355,7 @@
     padding: 0 24px 100px;
     max-width: 1080px;
     margin: 0 auto;
+    width: 100%;
   }
 
   .tags {
@@ -453,7 +467,10 @@
   body.chat-open {
     overflow: hidden;
     position: fixed;
+    left: 0;
+    right: 0;
     width: 100%;
+    max-width: 100%;
   }
 
   .wh-head {
@@ -698,6 +715,11 @@
       padding: 100px var(--gutter) 64px;
       min-height: auto;
       align-items: center;
+      touch-action: pan-y;
+    }
+    .hero-glow {
+      width: min(420px, 90vmax);
+      height: min(420px, 90vmax);
     }
     .hero-badge,
     .hero h1 {
