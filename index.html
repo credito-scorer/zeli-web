@@ -2,12 +2,44 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zeli — Tu asistente comercial en WhatsApp</title>
-<meta name="description" content="Zeli automatiza las operaciones de tu negocio a través de WhatsApp. Tecnología para pequeñas y medianas empresas en Panamá.">
-<meta property="og:title" content="Zeli Technologies">
-<meta property="og:description" content="Pregúntale a Zeli. Tu asistente comercial en WhatsApp.">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Zeli — Sitio web y asistente IA para tu negocio | Panamá</title>
+<meta name="description" content="Zeli te arma un sitio web y le pone un asistente que contesta por ti. Horarios, precios y cotizaciones en web y WhatsApp. Para negocios en Panamá. Primer mes gratis.">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#03060f">
+<meta name="format-detection" content="telephone=no">
+<link rel="canonical" href="https://zeli.lat/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeli.lat/">
+<meta property="og:locale" content="es_PA">
+<meta property="og:site_name" content="Zeli Technologies">
+<meta property="og:title" content="Zeli — Sitio web y asistente IA para tu negocio">
+<meta property="og:description" content="Te armamos el sitio y le ponemos un asistente que contesta por ti. Pregúntale a Zeli ahora mismo.">
 <meta property="og:image" content="https://zeli.lat/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Zeli — Sitio web y asistente IA para tu negocio">
+<meta name="twitter:description" content="Te armamos el sitio y le ponemos un asistente que contesta por ti. Pregúntale a Zeli.">
+<meta name="twitter:image" content="https://zeli.lat/og.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Zeli Technologies",
+  "url": "https://zeli.lat",
+  "logo": "https://zeli.lat/favicon.svg",
+  "description": "Sitio web y asistente con IA para pequeñas y medianas empresas en Panamá.",
+  "areaServed": { "@type": "Country", "name": "Panamá" },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "sales",
+    "url": "https://wa.me/50764221918",
+    "availableLanguage": "Spanish"
+  }
+}
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap');
 
@@ -23,13 +55,18 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
 
   body {
     background: var(--bg);
     color: var(--text);
     font-family: 'Outfit', sans-serif;
     min-height: 100vh;
+    min-height: 100dvh;
     overflow-x: hidden;
   }
 
@@ -41,7 +78,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 48px;
+    padding: max(20px, env(safe-area-inset-top)) 48px 20px;
     background: rgba(3,6,15,0.8);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(0,194,255,0.08);
@@ -88,6 +125,7 @@
   }
 
   .nav-cta:hover { opacity: 0.85; }
+  .nav-cta-short { display: none; }
 
   /* ── HERO ── */
   .hero {
@@ -340,9 +378,12 @@
   .chat-launcher {
     width: 64px;
     height: 64px;
+    min-width: 48px;
+    min-height: 48px;
     border: none;
     border-radius: 50%;
     cursor: pointer;
+    touch-action: manipulation;
     background: linear-gradient(135deg, #00C2FF, #0066FF);
     box-shadow: 0 8px 32px rgba(0,102,255,0.3);
     display: flex;
@@ -450,13 +491,14 @@
   .wh-foot textarea {
     flex: 1; resize: none; background: rgba(255,255,255,0.04);
     border: 1px solid var(--border); border-radius: 14px;
-    color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px;
+    color: var(--text); font-family: 'Outfit', sans-serif; font-size: 16px;
     padding: 11px 14px; max-height: 90px; outline: none;
   }
   .wh-foot textarea:focus { border-color: rgba(0,194,255,0.4); }
   .wh-foot textarea::placeholder { color: rgba(255,255,255,0.3); }
   .chat-send {
-    width: 42px; height: 42px; flex-shrink: 0; border: none; cursor: pointer;
+    width: 44px; height: 44px; flex-shrink: 0; border: none; cursor: pointer;
+    touch-action: manipulation;
     background: linear-gradient(135deg, #00C2FF, #0066FF);
     border-radius: 12px; display: flex; align-items: center; justify-content: center;
     transition: opacity 0.2s;
@@ -498,7 +540,7 @@
   /* ── FOOTER ── */
   footer {
     border-top: 1px solid var(--border);
-    padding: 32px 48px;
+    padding: 32px 48px max(32px, env(safe-area-inset-bottom));
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -534,14 +576,38 @@
 
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
-    nav { padding: 16px 24px; }
+    nav { padding: 14px 20px; }
+    .nav-cta-long { display: none; }
+    .nav-cta-short { display: inline; }
+    .nav-cta { font-size: 13px; padding: 10px 18px; min-height: 44px; display: inline-flex; align-items: center; }
+    .hero { padding: 100px 20px 64px; min-height: auto; }
+    .hero h1 { letter-spacing: -2px; }
+    .hero p { max-width: 100%; margin-bottom: 36px; }
+    .hero-badge { font-size: 11px; letter-spacing: 1.5px; padding: 6px 14px; }
+    .section { padding: 64px 20px; }
+    .section-title { margin-bottom: 40px; }
+    .verticals { padding: 0 20px 64px; }
+    .step { padding: 32px 24px; }
     .steps { grid-template-columns: 1fr; gap: 2px; }
     .step:first-child { border-radius: 16px 16px 0 0; }
     .step:last-child { border-radius: 0 0 16px 16px; }
-    footer { flex-direction: column; gap: 20px; text-align: center; }
-    .footer-links { flex-wrap: wrap; justify-content: center; }
+    .tag { font-size: 13px; padding: 10px 16px; }
+    footer { flex-direction: column; gap: 20px; text-align: center; padding: 28px 20px; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 20px; }
     .cta-box { padding: 40px 24px; }
-    .chat-panel { max-height: 55vh; margin-top: 32px; }
+    .cta-section { padding: 0 20px 80px; }
+    .chat-panel {
+      max-width: 100%;
+      width: 100%;
+      height: min(72dvh, 560px);
+      max-height: 72dvh;
+      margin-top: 28px;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .nav-name { font-size: 20px; }
+    .hero h1 { font-size: clamp(40px, 12vw, 56px); }
   }
 </style>
 </head>
@@ -558,7 +624,7 @@
     </div>
     <span class="nav-name">Zel<span>i</span></span>
   </a>
-  <a href="https://wa.me/50764221918" class="nav-cta" target="_blank">Hablar con Zeli →</a>
+  <a href="https://wa.me/50764221918" class="nav-cta" target="_blank" rel="noopener"><span class="nav-cta-long">Hablar con Zeli →</span><span class="nav-cta-short">WhatsApp →</span></a>
 </nav>
 
 <!-- Hero -->
@@ -610,7 +676,7 @@
     <div class="wh-body" id="chat-body"></div>
 
     <div class="wh-foot">
-      <textarea id="chat-input" rows="1" placeholder="Escríbele a Zeli…"></textarea>
+      <textarea id="chat-input" rows="1" placeholder="Escríbele a Zeli…" enterkeyhint="send" autocomplete="off"></textarea>
       <button class="chat-send" id="chat-send" disabled aria-label="Enviar">
         <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-5 16-3-6-8-2z" fill="white"/></svg>
       </button>
