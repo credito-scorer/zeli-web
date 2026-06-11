@@ -336,6 +336,134 @@
     color: var(--blue);
   }
 
+  /* ── CHAT WIDGET (hero) ── */
+  .chat-launcher {
+    width: 64px;
+    height: 64px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    box-shadow: 0 8px 32px rgba(0,102,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    flex-shrink: 0;
+  }
+  .chat-launcher:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,102,255,0.45);
+  }
+  .chat-launcher svg { width: 28px; height: 28px; }
+  .chat-launcher.open svg.chat-icon { display: none; }
+  .chat-launcher:not(.open) svg.close-icon { display: none; }
+
+  .chat-panel {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+    height: 520px;
+    max-height: 60vh;
+    margin: 40px auto 0;
+    background: var(--surface);
+    border: 1px solid rgba(0,194,255,0.15);
+    border-radius: 22px;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 24px 70px rgba(0,0,0,0.55);
+    font-family: 'Outfit', sans-serif;
+  }
+  .chat-panel.open { display: flex; }
+
+  .wh-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,194,255,0.04);
+    flex-shrink: 0;
+  }
+  .wh-icon {
+    width: 38px; height: 38px;
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .wh-icon svg { width: 22px; height: 22px; }
+  .wh-name { font-weight: 800; font-size: 17px; letter-spacing: -0.3px; }
+  .wh-name span { color: var(--blue); }
+  .wh-sub {
+    font-size: 11px; color: var(--muted); margin-top: 1px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .wh-dot { width: 6px; height: 6px; border-radius: 50%; background: #2ecc71; }
+  .wh-tag {
+    margin-left: auto; font-size: 9px; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--blue);
+    border: 1px solid rgba(0,194,255,0.25); border-radius: 100px;
+    padding: 4px 10px;
+  }
+
+  .wh-body {
+    flex: 1; overflow-y: auto; padding: 20px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .wh-body::-webkit-scrollbar { width: 6px; }
+  .wh-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+  .msg { max-width: 82%; font-size: 14px; line-height: 1.5; }
+  .msg.bot {
+    align-self: flex-start;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 11px 15px;
+    border-radius: 4px 16px 16px 16px;
+    white-space: pre-wrap;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    color: #fff; font-weight: 500;
+    padding: 11px 15px;
+    border-radius: 16px 4px 16px 16px;
+  }
+  .typing { align-self: flex-start; display: flex; gap: 4px; padding: 12px 16px; }
+  .typing span {
+    width: 7px; height: 7px; border-radius: 50%; background: var(--blue);
+    opacity: 0.4; animation: bounce 1.2s infinite;
+  }
+  .typing span:nth-child(2){ animation-delay: 0.15s; }
+  .typing span:nth-child(3){ animation-delay: 0.3s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0);opacity:0.4} 30%{transform:translateY(-5px);opacity:1} }
+
+  .wh-foot {
+    padding: 14px 16px; border-top: 1px solid var(--border);
+    display: flex; gap: 10px; align-items: flex-end;
+    flex-shrink: 0;
+  }
+  .wh-foot textarea {
+    flex: 1; resize: none; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border); border-radius: 14px;
+    color: var(--text); font-family: 'Outfit', sans-serif; font-size: 14px;
+    padding: 11px 14px; max-height: 90px; outline: none;
+  }
+  .wh-foot textarea:focus { border-color: rgba(0,194,255,0.4); }
+  .wh-foot textarea::placeholder { color: rgba(255,255,255,0.3); }
+  .chat-send {
+    width: 42px; height: 42px; flex-shrink: 0; border: none; cursor: pointer;
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.2s;
+  }
+  .chat-send:disabled { opacity: 0.35; cursor: default; }
+  .chat-send svg { width: 20px; height: 20px; }
+
   /* ── CTA SECTION ── */
   .cta-section {
     padding: 0 24px 120px;
@@ -413,6 +541,7 @@
     footer { flex-direction: column; gap: 20px; text-align: center; }
     .footer-links { flex-wrap: wrap; justify-content: center; }
     .cta-box { padding: 40px 24px; }
+    .chat-panel { max-height: 55vh; margin-top: 32px; }
   }
 </style>
 </head>
@@ -439,7 +568,7 @@
 
   <div class="hero-badge">
     <div class="badge-dot"></div>
-    Disponible en WhatsApp · Panamá
+    Disponible en Panamá
   </div>
 
   <h1>
@@ -448,18 +577,44 @@
   </h1>
 
   <p>
-    Tu asistente comercial en WhatsApp. <strong>Automatizamos las operaciones de tu negocio</strong> para que pases menos tiempo en el teléfono y más tiempo vendiendo.
+    <strong>Te armamos tu propio sitio web y le ponemos un asistente virtual que contesta por ti.</strong> Horarios, precios, cotizaciones — en tu web y en WhatsApp, sin que tengas que estar pegado al teléfono.
   </p>
 
   <div class="hero-actions">
-    <a href="https://wa.me/50764221918" class="btn-primary" target="_blank">
-      <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.124.555 4.122 1.528 5.855L.057 23.882l6.164-1.616A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.891 0-3.659-.497-5.193-1.367l-.371-.22-3.862 1.013 1.031-3.771-.242-.389A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+    <button class="chat-launcher" id="chat-launcher" aria-label="Pregúntale a Zeli">
+      <svg class="chat-icon" viewBox="0 0 24 24" fill="none">
+        <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
-      Hablar con Zeli
-    </a>
+      <svg class="close-icon" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6L6 18M6 6l12 12" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </button>
     <a href="#como-funciona" class="btn-secondary">¿Cómo funciona? ↓</a>
+  </div>
+
+  <div class="chat-panel" id="chat-panel" role="dialog" aria-label="Chat con Zeli">
+    <div class="wh-head">
+      <div class="wh-icon">
+        <svg viewBox="0 0 28 28" fill="none">
+          <path d="M6 6h16l-12 8h12" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 14l-4 8h16" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="wh-name">Zel<span>i</span></div>
+        <div class="wh-sub"><span class="wh-dot"></span> En línea · responde al instante</div>
+      </div>
+      <div class="wh-tag">Demo</div>
+    </div>
+
+    <div class="wh-body" id="chat-body"></div>
+
+    <div class="wh-foot">
+      <textarea id="chat-input" rows="1" placeholder="Escríbele a Zeli…"></textarea>
+      <button class="chat-send" id="chat-send" disabled aria-label="Enviar">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-5 16-3-6-8-2z" fill="white"/></svg>
+      </button>
+    </div>
   </div>
 </section>
 
@@ -473,7 +628,7 @@
       <div class="step-num">01</div>
       <span class="step-icon">💬</span>
       <h3>Escríbenos</h3>
-      <p>Manda un mensaje por WhatsApp con lo que necesitas. Así como le escribes a un amigo.</p>
+      <p>No necesitas tener página web — te la armamos. Manda un mensaje por WhatsApp con lo que necesitas, así como le escribes a un amigo.</p>
     </div>
     <div class="step">
       <div class="step-num">02</div>
@@ -487,6 +642,20 @@
       <h3>Listo</h3>
       <p>Recibes confirmación, precio y tiempo de entrega. Tú decides. Nosotros ejecutamos.</p>
     </div>
+  </div>
+</div>
+
+<!-- Capabilities -->
+<div class="verticals">
+  <div class="section-label">Qué incluye</div>
+  <h2 class="section-title">Sitio web y asistente,<br>listos para tu negocio.</h2>
+
+  <div class="tags">
+    <span class="tag active">🌐 Te armamos y ponemos en línea tu sitio web.</span>
+    <span class="tag">💬 Asistente que contesta 24/7</span>
+    <span class="tag">📋 Cotizaciones y precios</span>
+    <span class="tag">📅 Citas y reservas</span>
+    <span class="tag">📱 Web y WhatsApp</span>
   </div>
 </div>
 
@@ -533,6 +702,111 @@
   </div>
   <div class="footer-copy">© 2026 Zeli Technologies · Panamá</div>
 </footer>
+
+<script>
+(function () {
+  const API_URL = 'https://autoparts-production.up.railway.app/web-chat';
+  const GREETING = '¡Hola! Soy Zeli 👋 Le armamos a tu negocio una página web sencilla y le ponemos un asistente como yo, que contesta a tus clientes solo. Pregúntame lo que quieras: qué hago, cómo funciona, o cómo me vería en tu negocio.';
+
+  const launcher = document.getElementById('chat-launcher');
+  const panel = document.getElementById('chat-panel');
+  const body = document.getElementById('chat-body');
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send');
+
+  let history = [];
+  let greeted = false;
+
+  function addMsg(role, text) {
+    const el = document.createElement('div');
+    el.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+    el.textContent = text;
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function showTyping() {
+    const el = document.createElement('div');
+    el.className = 'typing';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    el.id = 'chat-typing';
+    body.appendChild(el);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function hideTyping() {
+    const t = document.getElementById('chat-typing');
+    if (t) t.remove();
+  }
+
+  function openPanel() {
+    panel.classList.add('open');
+    launcher.classList.add('open');
+    if (!greeted) {
+      addMsg('bot', GREETING);
+      greeted = true;
+    }
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    input.focus();
+  }
+
+  function closePanel() {
+    panel.classList.remove('open');
+    launcher.classList.remove('open');
+  }
+
+  launcher.addEventListener('click', () => {
+    if (panel.classList.contains('open')) closePanel();
+    else openPanel();
+  });
+
+  input.addEventListener('input', () => {
+    sendBtn.disabled = input.value.trim() === '';
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 90) + 'px';
+  });
+
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
+  });
+
+  sendBtn.addEventListener('click', send);
+
+  async function send() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMsg('user', text);
+    history.push({ role: 'user', content: text });
+    input.value = '';
+    input.style.height = 'auto';
+    sendBtn.disabled = true;
+    showTyping();
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history })
+      });
+
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+
+      const data = await res.json();
+      const reply = (data.reply || '').trim() || 'Disculpa, no pude responder esa. ¿La intentamos de nuevo?';
+
+      hideTyping();
+      addMsg('bot', reply);
+      history.push({ role: 'assistant', content: reply });
+    } catch (err) {
+      hideTyping();
+      addMsg('bot', 'Se me fue la señal un momento. ¿Me lo repites?');
+      history.pop();
+      console.error(err);
+    }
+  }
+})();
+</script>
 
 </body>
 </html>
