@@ -202,7 +202,7 @@
     font-weight: 900;
     letter-spacing: -4px;
     line-height: 0.95;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     position: relative;
     z-index: 1;
   }
@@ -214,20 +214,16 @@
     background-clip: text;
   }
 
-  .hero p {
-    font-size: clamp(16px, 2.5vw, 20px);
+  .hero-subtitle {
+    font-size: clamp(15px, 2.2vw, 18px);
     font-weight: 300;
     color: var(--muted);
-    max-width: 520px;
+    max-width: 560px;
     line-height: 1.6;
-    margin-bottom: 48px;
+    margin-bottom: 28px;
     position: relative;
     z-index: 1;
-  }
-
-  .hero p strong {
-    color: rgba(255,255,255,0.8);
-    font-weight: 600;
+    text-wrap: balance;
   }
 
   .hero-actions {
@@ -238,6 +234,7 @@
     justify-content: center;
     position: relative;
     z-index: 1;
+    margin-top: 28px;
   }
 
   .btn-primary {
@@ -430,13 +427,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 32px;
+    margin-bottom: 0;
+    width: 100%;
   }
 
   .orb {
     position: relative;
-    width: 168px;
-    height: 168px;
+    width: 152px;
+    height: 152px;
     border: none;
     border-radius: 50%;
     background: transparent;
@@ -523,32 +521,114 @@
     font-weight: 600;
   }
 
-  .orb-caption {
+  .hero-ask {
     margin-top: 14px;
-    max-width: 560px;
-    min-height: 0;
-    text-align: center;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid rgba(0,194,255,0.15);
+    border-radius: 100px;
+    padding: 6px 6px 6px 20px;
   }
 
-  .orb-caption .you {
+  .hero-ask input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    outline: none;
+  }
+
+  .hero-ask input::placeholder { color: rgba(255,255,255,0.3); }
+
+  .hero-ask-send {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: opacity 0.2s;
+  }
+
+  .hero-ask-send:disabled { opacity: 0.35; cursor: default; }
+
+  .hero-ask-send svg { width: 18px; height: 18px; }
+
+  .answer-card {
+    margin-top: 24px;
+    width: 100%;
+    max-width: 420px;
+    background: var(--surface);
+    border: 1px solid rgba(0,194,255,0.15);
+    border-radius: 16px;
+    padding: 18px 20px;
+    text-align: left;
+    display: none;
+  }
+
+  .answer-card.visible { display: block; }
+
+  .answer-card .answer-q {
     font-size: 14px;
     color: var(--muted);
     font-style: italic;
-    margin-bottom: 8px;
+    margin-bottom: 14px;
   }
 
-  .orb-caption .zeli {
-    font-size: 16px;
+  .answer-card .answer-q:last-child { margin-bottom: 0; }
+
+  .answer-card .answer-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .answer-card .answer-avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00C2FF, #0066FF);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .answer-card .answer-text {
+    font-size: 15px;
     line-height: 1.6;
     color: rgba(255,255,255,0.85);
     font-weight: 300;
   }
 
   @media (max-width: 768px) {
-    .orb { width: 140px; height: 140px; }
+    .orb { width: 128px; height: 128px; }
     .orb-core svg { width: 38px; height: 38px; }
-    .orb-wrap { margin-bottom: 28px; }
-    .orb-caption .zeli { font-size: 15px; }
+    .hero-ask {
+      max-width: 100%;
+      padding: 5px 5px 5px 16px;
+    }
+    .hero-ask input { font-size: 14px; }
+    .hero-ask-send { width: 40px; height: 40px; min-width: 40px; }
+    .answer-card { padding: 16px 18px; }
+    .answer-card .answer-text { font-size: 14px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -863,9 +943,9 @@
       letter-spacing: -0.5px;
       text-wrap: balance;
     }
-    .hero p {
+    .hero-subtitle {
       width: 100%;
-      margin-bottom: 36px;
+      margin-bottom: 24px;
       text-wrap: balance;
     }
     .hero-badge {
@@ -877,6 +957,7 @@
     .hero-actions {
       width: 100%;
       margin-inline: auto;
+      margin-top: 24px;
     }
     .section {
       padding: 64px var(--gutter);
@@ -911,10 +992,6 @@
       align-items: center;
     }
     .hero-actions .btn-secondary { margin-top: 4px; }
-    .chat-launcher {
-      justify-content: center;
-      max-width: 100%;
-    }
 
     .chat-panel.open {
       top: auto;
@@ -1007,8 +1084,10 @@
     a <span class="highlight">Zeli.</span>
   </h1>
 
+  <p class="hero-subtitle">Tu asistente que atiende tu negocio 24/7 — en tu web y en WhatsApp.</p>
+
   <div class="orb-wrap">
-    <button class="orb" id="voice-orb" aria-label="Toca y habla con Zeli" type="button">
+    <button class="orb" id="voice-orb" aria-label="Haz click y habla con Zeli" type="button">
       <span class="orb-gradient" aria-hidden="true"></span>
       <span class="orb-ring" aria-hidden="true"></span>
       <span class="orb-core">
@@ -1018,21 +1097,17 @@
         </svg>
       </span>
     </button>
-    <div class="orb-status" id="orb-status">Toca y habla</div>
-    <div class="orb-caption" id="orb-caption" aria-live="polite"></div>
+    <div class="orb-status" id="orb-status">Haz click y habla</div>
+    <form class="hero-ask" id="hero-ask" autocomplete="off">
+      <input type="text" id="hero-ask-input" placeholder="…o escríbeme tu pregunta aquí" enterkeyhint="send" aria-label="Escribe tu pregunta">
+      <button class="hero-ask-send" id="hero-ask-send" type="submit" disabled aria-label="Enviar pregunta">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-5 16-3-6-8-2z" fill="white"/></svg>
+      </button>
+    </form>
+    <div class="answer-card" id="answer-card" aria-live="polite"></div>
   </div>
 
-  <p>
-    <strong>Te armamos tu propio sitio web y le ponemos un asistente virtual que contesta por ti.</strong> Horarios, precios, cotizaciones — en tu web y en WhatsApp, sin que tengas que estar pegado al teléfono.
-  </p>
-
   <div class="hero-actions" id="hero-actions">
-    <button class="chat-launcher" id="chat-launcher" aria-label="Escríbele a Zeli" type="button">
-      <svg class="chat-icon" viewBox="0 0 24 24" fill="none">
-        <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="chat-launcher-label">Prefiero escribir</span>
-    </button>
     <a href="#como-funciona" class="btn-secondary">¿Cómo funciona? ↓</a>
   </div>
 </section>
@@ -1172,6 +1247,9 @@
   const body = document.getElementById('chat-body');
   const input = document.getElementById('chat-input');
   const sendBtn = document.getElementById('chat-send');
+  const heroAskForm = document.getElementById('hero-ask');
+  const heroAskInput = document.getElementById('hero-ask-input');
+  const heroAskSend = document.getElementById('hero-ask-send');
   const mobileMq = window.matchMedia('(max-width: 768px)');
 
   let history = [];
@@ -1231,7 +1309,7 @@
   function openPanel() {
     scrollY = window.scrollY;
     panel.classList.add('open');
-    launcher.classList.add('open');
+    if (launcher) launcher.classList.add('open');
     document.body.classList.add('chat-open');
     document.body.style.top = `-${scrollY}px`;
     backdrop.classList.add('open');
@@ -1246,7 +1324,7 @@
 
   function closePanel() {
     panel.classList.remove('open');
-    launcher.classList.remove('open');
+    if (launcher) launcher.classList.remove('open');
     document.body.classList.remove('chat-open');
     document.body.style.top = '';
     window.scrollTo(0, scrollY);
@@ -1255,7 +1333,7 @@
     input.blur();
   }
 
-  launcher.addEventListener('click', openPanel);
+  if (launcher) launcher.addEventListener('click', openPanel);
   closeBtn.addEventListener('click', closePanel);
   backdrop.addEventListener('click', closePanel);
 
@@ -1320,7 +1398,7 @@
   /* ── VOICE ORB ── */
   const orb = document.getElementById('voice-orb');
   const orbStatus = document.getElementById('orb-status');
-  const orbCaption = document.getElementById('orb-caption');
+  const answerCard = document.getElementById('answer-card');
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const canListen = !!SR;
   const canSpeak = 'speechSynthesis' in window;
@@ -1328,6 +1406,31 @@
   let orbState = 'idle';
   let recognition = null;
   let voices = [];
+
+  function syncHeroAskControls() {
+    heroAskSend.disabled = orbState === 'thinking' || orbState === 'listening' || heroAskInput.value.trim() === '';
+  }
+
+  function updateHeroPlaceholder() {
+    heroAskInput.placeholder = history.some((m) => m.role === 'assistant')
+      ? 'Pregúntame algo más…'
+      : '…o escríbeme tu pregunta aquí';
+  }
+
+  function submitHeroQuestion() {
+    const text = heroAskInput.value.trim();
+    if (!text || orbState === 'thinking' || orbState === 'listening') return;
+    heroAskInput.value = '';
+    syncHeroAskControls();
+    askByVoice(text);
+  }
+
+  heroAskForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    submitHeroQuestion();
+  });
+
+  heroAskInput.addEventListener('input', syncHeroAskControls);
 
   if (canSpeak) {
     const loadVoices = () => { voices = window.speechSynthesis.getVoices(); };
@@ -1352,23 +1455,38 @@
       s === 'listening' ? 'Escuchando… toca para enviar' :
       s === 'thinking'  ? 'Pensando…' :
       s === 'speaking'  ? 'Toca para interrumpir' :
-      'Toca y habla'
+      'Haz click y habla'
     );
+    syncHeroAskControls();
   }
 
   function setCaption(userText, zeliText) {
-    orbCaption.innerHTML = '';
+    if (!userText && !zeliText) {
+      answerCard.classList.remove('visible');
+      answerCard.innerHTML = '';
+      return;
+    }
+    answerCard.classList.add('visible');
+    answerCard.innerHTML = '';
     if (userText) {
-      const u = document.createElement('div');
-      u.className = 'you';
-      u.textContent = '“' + userText + '”';
-      orbCaption.appendChild(u);
+      const q = document.createElement('div');
+      q.className = 'answer-q';
+      q.textContent = '“' + userText + '”';
+      answerCard.appendChild(q);
     }
     if (zeliText) {
-      const z = document.createElement('div');
-      z.className = 'zeli';
-      z.textContent = zeliText;
-      orbCaption.appendChild(z);
+      const row = document.createElement('div');
+      row.className = 'answer-row';
+      const av = document.createElement('div');
+      av.className = 'answer-avatar';
+      av.textContent = 'Z';
+      av.setAttribute('aria-hidden', 'true');
+      const txt = document.createElement('div');
+      txt.className = 'answer-text';
+      txt.textContent = zeliText;
+      row.appendChild(av);
+      row.appendChild(txt);
+      answerCard.appendChild(row);
     }
   }
 
@@ -1445,6 +1563,7 @@
       history.push({ role: 'assistant', content: reply });
       addMsg('bot', reply);
       setCaption(question, reply);
+      updateHeroPlaceholder();
       speakReply(reply);
     } catch (err) {
       console.error(err);
@@ -1452,6 +1571,7 @@
       setCaption(question, 'Se me fue la señal un momento. Toca e inténtalo de nuevo.');
       setOrbState('idle');
     }
+    syncHeroAskControls();
   }
 
   function startListening() {
