@@ -574,26 +574,62 @@
     background: var(--surface);
     border: 1px solid rgba(0,194,255,0.15);
     border-radius: 16px;
-    padding: 18px 20px;
     text-align: left;
     display: none;
+    flex-direction: column;
+    max-height: min(320px, 38vh);
+    overflow: hidden;
   }
 
-  .answer-card.visible { display: block; }
+  .answer-card.visible { display: flex; }
+
+  .answer-thread {
+    overflow-y: auto;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .answer-thread::-webkit-scrollbar { width: 4px; }
+  .answer-thread::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.12);
+    border-radius: 2px;
+  }
+
+  .answer-turn {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .answer-turn--live .answer-q { opacity: 0.65; }
 
   .answer-card .answer-q {
     font-size: 14px;
     color: var(--muted);
     font-style: italic;
-    margin-bottom: 14px;
+    margin-bottom: 0;
   }
-
-  .answer-card .answer-q:last-child { margin-bottom: 0; }
 
   .answer-card .answer-row {
     display: flex;
     gap: 12px;
     align-items: flex-start;
+  }
+
+  .answer-card .answer-row--tap {
+    cursor: pointer;
+    border-radius: 10px;
+    padding: 4px;
+    margin: -4px;
+    transition: background 0.2s;
+  }
+
+  .answer-card .answer-row--tap:active {
+    background: rgba(0,194,255,0.08);
   }
 
   .answer-card .answer-avatar {
@@ -633,7 +669,8 @@
     }
     .hero-ask input { font-size: 16px; }
     .hero-ask-send { width: 44px; height: 44px; min-width: 44px; }
-    .answer-card { margin-top: 20px; padding: 16px 18px; }
+    .answer-card { margin-top: 20px; max-height: min(280px, 34vh); }
+    .answer-thread { padding: 16px 18px; gap: 16px; }
     .answer-card .answer-text { font-size: 14px; }
   }
 
@@ -1104,7 +1141,9 @@
         <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-5 16-3-6-8-2z" fill="white"/></svg>
       </button>
     </form>
-    <div class="answer-card" id="answer-card" aria-live="polite"></div>
+    <div class="answer-card" id="answer-card" aria-live="polite">
+      <div class="answer-thread" id="answer-thread"></div>
+    </div>
   </div>
 
   <div class="hero-actions" id="hero-actions">
@@ -1237,6 +1276,7 @@
   let audioCtx = null;
   let currentSource = null;
   let tapPlayHandler = null;
+  let tapPlayTarget = null;
   const GREETING = '¡Hola! Soy Zeli 👋 Le armamos a tu negocio una página web sencilla y le ponemos un asistente como yo, que contesta a tus clientes solo. Pregúntame lo que quieras: qué hago, cómo funciona, o cómo me vería en tu negocio.';
   const SUGGESTIONS = [
     '¿Qué hace Zeli?',
@@ -1403,6 +1443,7 @@
   const orb = document.getElementById('voice-orb');
   const orbStatus = document.getElementById('orb-status');
   const answerCard = document.getElementById('answer-card');
+  const answerThread = document.getElementById('answer-thread');
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const canListen = !!(SR && window.isSecureContext);
   const canSpeak = 'speechSynthesis' in window;
@@ -1473,34 +1514,88 @@
     syncHeroAskControls();
   }
 
-  function setCaption(userText, zeliText) {
-    if (!userText && !zeliText) {
-      answerCard.classList.remove('visible');
-      answerCard.innerHTML = '';
+  function showAnswerCard() {
+    answerCard.classList.add('visible');
+  }
+
+  function scrollAnswerThread() {
+    requestAnimationFrame(() => {
+      answerThread.scrollTop = answerThread.scrollHeight;
+    });
+  }
+
+  function clearLiveTranscript() {
+    answerThread.querySelector('.answer-turn--live')?.remove();
+  }
+
+  function updateLiveTranscript(text) {
+    if (!text) {
+      clearLiveTranscript();
       return;
     }
-    answerCard.classList.add('visible');
-    answerCard.innerHTML = '';
-    if (userText) {
-      const q = document.createElement('div');
-      q.className = 'answer-q';
-      q.textContent = '“' + userText + '”';
-      answerCard.appendChild(q);
+    showAnswerCard();
+    let live = answerThread.querySelector('.answer-turn--live');
+    if (!live) {
+      live = document.createElement('div');
+      live.className = 'answer-turn answer-turn--live';
+      answerThread.appendChild(live);
     }
-    if (zeliText) {
-      const row = document.createElement('div');
-      row.className = 'answer-row';
-      const av = document.createElement('div');
-      av.className = 'answer-avatar';
-      av.textContent = 'Z';
-      av.setAttribute('aria-hidden', 'true');
-      const txt = document.createElement('div');
-      txt.className = 'answer-text';
-      txt.textContent = zeliText;
-      row.appendChild(av);
-      row.appendChild(txt);
-      answerCard.appendChild(row);
+    live.innerHTML = '';
+    const q = document.createElement('div');
+    q.className = 'answer-q';
+    q.textContent = '“' + text + '”';
+    live.appendChild(q);
+    scrollAnswerThread();
+  }
+
+  function appendUserQuestion(text) {
+    clearLiveTranscript();
+    showAnswerCard();
+    const turn = document.createElement('div');
+    turn.className = 'answer-turn';
+    const q = document.createElement('div');
+    q.className = 'answer-q';
+    q.textContent = '“' + text + '”';
+    turn.appendChild(q);
+    answerThread.appendChild(turn);
+    scrollAnswerThread();
+  }
+
+  function commitUserQuestion(text) {
+    const live = answerThread.querySelector('.answer-turn--live');
+    if (live) {
+      live.classList.remove('answer-turn--live');
+      scrollAnswerThread();
+      return;
     }
+    const last = answerThread.querySelector('.answer-turn:last-child');
+    const lastQ = last?.querySelector('.answer-q');
+    if (last && !last.querySelector('.answer-row') && lastQ && lastQ.textContent === '“' + text + '”') return;
+    appendUserQuestion(text);
+  }
+
+  function appendBotReply(text) {
+    showAnswerCard();
+    let turn = answerThread.querySelector('.answer-turn:last-child');
+    if (!turn || turn.classList.contains('answer-turn--live') || turn.querySelector('.answer-row')) {
+      turn = document.createElement('div');
+      turn.className = 'answer-turn';
+      answerThread.appendChild(turn);
+    }
+    const row = document.createElement('div');
+    row.className = 'answer-row';
+    const av = document.createElement('div');
+    av.className = 'answer-avatar';
+    av.textContent = 'Z';
+    av.setAttribute('aria-hidden', 'true');
+    const txt = document.createElement('div');
+    txt.className = 'answer-text';
+    txt.textContent = text;
+    row.appendChild(av);
+    row.appendChild(txt);
+    turn.appendChild(row);
+    scrollAnswerThread();
+    return row;
   }
 
   function unlockAudio() {
@@ -1529,9 +1624,10 @@
       currentAudio.pause();
       currentAudio = null;
     }
-    if (tapPlayHandler && answerCard) {
-      answerCard.removeEventListener('click', tapPlayHandler);
+    if (tapPlayHandler && tapPlayTarget) {
+      tapPlayTarget.removeEventListener('click', tapPlayHandler);
       tapPlayHandler = null;
+      tapPlayTarget = null;
     }
   }
 
@@ -1584,8 +1680,13 @@
 
   function offerTapToPlay(blob, spoken) {
     setOrbState('idle', 'Toca la respuesta para escuchar');
+    const lastRow = answerThread.querySelector('.answer-turn:last-child .answer-row');
+    if (!lastRow) return;
+    lastRow.classList.add('answer-row--tap');
+    tapPlayTarget = lastRow;
     tapPlayHandler = async () => {
-      answerCard.removeEventListener('click', tapPlayHandler);
+      lastRow.classList.remove('answer-row--tap');
+      tapPlayTarget = null;
       tapPlayHandler = null;
       unlockAudio();
       try {
@@ -1594,7 +1695,7 @@
         fallbackSpeak(spoken);
       }
     };
-    answerCard.addEventListener('click', tapPlayHandler, { once: true });
+    tapPlayTarget.addEventListener('click', tapPlayHandler, { once: true });
   }
 
   function ttsText(text) {
@@ -1650,7 +1751,7 @@
 
   async function askByVoice(question) {
     setOrbState('thinking');
-    setCaption(question, '');
+    commitUserQuestion(question);
 
     // Mirror into the chat panel so text + voice share one conversation
     if (!greeted) { addMsg('bot', GREETING); greeted = true; }
@@ -1669,13 +1770,13 @@
       const reply = (data.reply || '').trim() || 'Disculpa, no pude responder esa. ¿La intentamos de nuevo?';
       history.push({ role: 'assistant', content: reply });
       addMsg('bot', reply);
-      setCaption(question, reply);
+      appendBotReply(reply);
       updateHeroPlaceholder();
       speakReply(reply);
     } catch (err) {
       console.error(err);
       history.pop();
-      setCaption(question, 'Se me fue la señal un momento. Toca e inténtalo de nuevo.');
+      appendBotReply('Se me fue la señal un momento. Toca e inténtalo de nuevo.');
       setOrbState('idle');
     }
     syncHeroAskControls();
@@ -1718,7 +1819,7 @@
         if (e.results[i].isFinal) finalText += e.results[i][0].transcript;
         else interim += e.results[i][0].transcript;
       }
-      setCaption(finalText || interim, '');
+      updateLiveTranscript(finalText || interim);
     };
     recognition.onend = () => {
       const q = finalText.trim();
@@ -1735,7 +1836,7 @@
       }
     };
 
-    setCaption('', '');
+    clearLiveTranscript();
     setOrbState('listening');
     recognition.start();
   }
