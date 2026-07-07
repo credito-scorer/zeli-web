@@ -1084,7 +1084,7 @@
     a <span class="highlight">Zeli.</span>
   </h1>
 
-  <p class="hero-subtitle">Tu asistente que atiende tu negocio 24/7 — en tu web y en WhatsApp.</p>
+  <p class="hero-subtitle">Tu asistente que atiende tu negocio 24/7 — desde tu sitio web hasta tu WhatsApp.</p>
 
   <div class="orb-wrap">
     <button class="orb" id="voice-orb" aria-label="Haz click y habla con Zeli" type="button">
@@ -1233,6 +1233,7 @@
   const API_URL = 'https://autoparts-production.up.railway.app/web-chat';
   const TTS_URL = 'https://autoparts-production.up.railway.app/tts';
   let currentAudio = null;
+  let audioUnlocked = false;
   const GREETING = '¡Hola! Soy Zeli 👋 Le armamos a tu negocio una página web sencilla y le ponemos un asistente como yo, que contesta a tus clientes solo. Pregúntame lo que quieras: qué hago, cómo funciona, o cómo me vería en tu negocio.';
   const SUGGESTIONS = [
     '¿Qué hace Zeli?',
@@ -1420,6 +1421,7 @@
   function submitHeroQuestion() {
     const text = heroAskInput.value.trim();
     if (!text || orbState === 'thinking' || orbState === 'listening') return;
+    unlockAudio();
     heroAskInput.value = '';
     syncHeroAskControls();
     askByVoice(text);
@@ -1490,6 +1492,23 @@
     }
   }
 
+  function unlockAudio() {
+    if (audioUnlocked) return;
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) new Ctx().resume().catch(() => {});
+      const probe = new Audio();
+      probe.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4T/kpAAAAAA//uQZAAAAAD0AAD/4QBpAAAAAAABAAAA';
+      probe.play().catch(() => {});
+    } catch (_) {}
+    audioUnlocked = true;
+  }
+
+  function ttsText(text) {
+    const t = text.trim();
+    return t.length > 600 ? t.slice(0, 597) + '…' : t;
+  }
+
   function fallbackSpeak(text) {
     if (!canSpeak) { setOrbState('idle'); return; }
     window.speechSynthesis.cancel();
@@ -1509,18 +1528,20 @@
       currentAudio = null;
     }
     setOrbState('thinking');
+    const spoken = ttsText(text);
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
       const res = await fetch(TTS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text: spoken }),
         signal: controller.signal
       });
       clearTimeout(timeoutId);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const blob = await res.blob();
+      if (!blob.type.startsWith('audio/')) throw new Error('Not audio');
       const url = URL.createObjectURL(blob);
       const audio = new Audio(url);
       currentAudio = audio;
@@ -1533,11 +1554,12 @@
       audio.onerror = () => {
         URL.revokeObjectURL(url);
         currentAudio = null;
-        fallbackSpeak(text);
+        fallbackSpeak(spoken);
       };
       await audio.play();
     } catch (err) {
-      fallbackSpeak(text);
+      console.warn('TTS fallback:', err);
+      fallbackSpeak(spoken);
     }
   }
 
@@ -1626,6 +1648,7 @@
           return;
         }
         if (orbState === 'thinking') return;
+        unlockAudio();
         startListening();
       });
     }
