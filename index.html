@@ -1156,6 +1156,8 @@
 <script>
 (function () {
   const API_URL = 'https://autoparts-production.up.railway.app/web-chat';
+  const TTS_URL = 'https://autoparts-production.up.railway.app/tts';
+  let currentAudio = null;
   const GREETING = '¡Hola! Soy Zeli 👋 Le armamos a tu negocio una página web sencilla y le ponemos un asistente como yo, que contesta a tus clientes solo. Pregúntame lo que quieras: qué hago, cómo funciona, o cómo me vería en tu negocio.';
   const SUGGESTIONS = [
     '¿Qué hace Zeli?',
@@ -1370,7 +1372,7 @@
     }
   }
 
-  function speakReply(text) {
+  function fallbackSpeak(text) {
     if (!canSpeak) { setOrbState('idle'); return; }
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
@@ -1381,6 +1383,44 @@
     u.onerror = () => setOrbState('idle');
     setOrbState('speaking');
     window.speechSynthesis.speak(u);
+  }
+
+  async function speakReply(text) {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+    }
+    setOrbState('thinking');
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch(TTS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      currentAudio = audio;
+      audio.onplay = () => setOrbState('speaking');
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        currentAudio = null;
+        setOrbState('idle');
+      };
+      audio.onerror = () => {
+        URL.revokeObjectURL(url);
+        currentAudio = null;
+        fallbackSpeak(text);
+      };
+      await audio.play();
+    } catch (err) {
+      fallbackSpeak(text);
+    }
   }
 
   async function askByVoice(question) {
@@ -1459,7 +1499,12 @@
     } else {
       orb.addEventListener('click', () => {
         if (orbState === 'listening') { recognition && recognition.stop(); return; }
-        if (orbState === 'speaking') { window.speechSynthesis.cancel(); setOrbState('idle'); return; }
+        if (orbState === 'speaking') {
+          if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+          window.speechSynthesis.cancel();
+          setOrbState('idle');
+          return;
+        }
         if (orbState === 'thinking') return;
         startListening();
       });
