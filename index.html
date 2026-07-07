@@ -1234,6 +1234,9 @@
   const TTS_URL = 'https://autoparts-production.up.railway.app/tts';
   let currentAudio = null;
   let audioUnlocked = false;
+  let audioCtx = null;
+  let currentSource = null;
+  let tapPlayHandler = null;
   const GREETING = '¡Hola! Soy Zeli 👋 Le armamos a tu negocio una página web sencilla y le ponemos un asistente como yo, que contesta a tus clientes solo. Pregúntame lo que quieras: qué hago, cómo funciona, o cómo me vería en tu negocio.';
   const SUGGESTIONS = [
     '¿Qué hace Zeli?',
@@ -1501,15 +1504,97 @@
   }
 
   function unlockAudio() {
-    if (audioUnlocked) return;
+    if (!window.isSecureContext) return;
     try {
       const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (Ctx) new Ctx().resume().catch(() => {});
-      const probe = new Audio();
-      probe.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4T/kpAAAAAA//uQZAAAAAD0AAD/4QBpAAAAAAABAAAA';
-      probe.play().catch(() => {});
+      if (Ctx && !audioCtx) audioCtx = new Ctx();
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+      if (!audioUnlocked) {
+        const probe = new Audio();
+        probe.setAttribute('playsinline', '');
+        probe.playsInline = true;
+        probe.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAA4T/kpAAAAAA//uQZAAAAAD0AAD/4QBpAAAAAAABAAAA';
+        probe.play().catch(() => {});
+      }
+      audioUnlocked = true;
     } catch (_) {}
-    audioUnlocked = true;
+  }
+
+  function stopPlayback() {
+    if (currentSource) {
+      try { currentSource.stop(); } catch (_) {}
+      currentSource = null;
+    }
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+    }
+    if (tapPlayHandler && answerCard) {
+      answerCard.removeEventListener('click', tapPlayHandler);
+      tapPlayHandler = null;
+    }
+  }
+
+  async function playMp3Blob(blob) {
+    if (audioCtx) {
+      try {
+        if (audioCtx.state === 'suspended') await audioCtx.resume();
+        const buffer = await audioCtx.decodeAudioData(await blob.arrayBuffer());
+        return new Promise((resolve, reject) => {
+          const source = audioCtx.createBufferSource();
+          source.buffer = buffer;
+          source.connect(audioCtx.destination);
+          source.onended = () => {
+            currentSource = null;
+            currentAudio = null;
+            setOrbState('idle');
+            resolve();
+          };
+          currentSource = source;
+          currentAudio = { pause: () => stopPlayback() };
+          setOrbState('speaking');
+          source.start(0);
+        });
+      } catch (e) {
+        console.warn('WebAudio playback failed:', e);
+      }
+    }
+
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.setAttribute('playsinline', '');
+    audio.playsInline = true;
+    currentAudio = audio;
+    return new Promise((resolve, reject) => {
+      audio.onplay = () => setOrbState('speaking');
+      audio.onended = () => {
+        URL.revokeObjectURL(url);
+        currentAudio = null;
+        setOrbState('idle');
+        resolve();
+      };
+      audio.onerror = () => {
+        URL.revokeObjectURL(url);
+        currentAudio = null;
+        reject(new Error('audio element error'));
+      };
+      audio.play().catch(reject);
+    });
+  }
+
+  function offerTapToPlay(blob, spoken) {
+    setOrbState('idle', 'Toca la respuesta para escuchar');
+    tapPlayHandler = async () => {
+      answerCard.removeEventListener('click', tapPlayHandler);
+      tapPlayHandler = null;
+      unlockAudio();
+      try {
+        await playMp3Blob(blob);
+      } catch {
+        fallbackSpeak(spoken);
+      }
+    };
+    answerCard.addEventListener('click', tapPlayHandler, { once: true });
   }
 
   function ttsText(text) {
@@ -1531,10 +1616,7 @@
   }
 
   async function speakReply(text) {
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio = null;
-    }
+    stopPlayback();
     setOrbState('thinking');
     const spoken = ttsText(text);
     try {
@@ -1550,21 +1632,16 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const blob = await res.blob();
       if (!blob.type.startsWith('audio/')) throw new Error('Not audio');
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      currentAudio = audio;
-      audio.onplay = () => setOrbState('speaking');
-      audio.onended = () => {
-        URL.revokeObjectURL(url);
-        currentAudio = null;
-        setOrbState('idle');
-      };
-      audio.onerror = () => {
-        URL.revokeObjectURL(url);
-        currentAudio = null;
-        fallbackSpeak(spoken);
-      };
-      await audio.play();
+      try {
+        await playMp3Blob(blob);
+      } catch (playErr) {
+        console.warn('TTS play failed:', playErr);
+        if (isMobile()) {
+          offerTapToPlay(blob, spoken);
+        } else {
+          fallbackSpeak(spoken);
+        }
+      }
     } catch (err) {
       console.warn('TTS fallback:', err);
       fallbackSpeak(spoken);
@@ -1632,6 +1709,8 @@
     recognition.interimResults = true;
     recognition.maxAlternatives = 1;
 
+    recognition.onstart = () => unlockAudio();
+
     let finalText = '';
     recognition.onresult = (e) => {
       let interim = '';
@@ -1672,7 +1751,7 @@
       orb.addEventListener('click', () => {
         if (orbState === 'listening') { recognition && recognition.stop(); return; }
         if (orbState === 'speaking') {
-          if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+          stopPlayback();
           window.speechSynthesis.cancel();
           setOrbState('idle');
           return;
