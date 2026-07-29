@@ -1269,8 +1269,9 @@
 
 <script>
 (function () {
-  const API_URL = 'https://autoparts-production.up.railway.app/web-chat';
-  const TTS_URL = 'https://autoparts-production.up.railway.app/tts';
+  const API_BASE = 'https://zeli-whatsapp.ronelalmanza20.workers.dev';
+  const API_URL = `${API_BASE}/web-chat`;
+  const TTS_URL = `${API_BASE}/tts`;
   let currentAudio = null;
   let audioUnlocked = false;
   let audioCtx = null;
